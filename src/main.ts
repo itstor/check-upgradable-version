@@ -44,8 +44,8 @@ import { Outputs } from './types';
     }
 
     const outputs: Outputs = {
-      from_version: 'v' + pkgVersion,
-      to_version: 'v' + releasedVersion,
+      from_version: 'v' + releasedVersion,
+      to_version: 'v' + pkgVersion,
       is_upgradable: releasedVersion !== pkgVersion,
     };
 

@@ -29343,8 +29343,8 @@ const helper_1 = __nccwpck_require__(104);
                 core.info(`Upgradable version: v${releasedVersion} -> v${pkgVersion}`);
             }
             const outputs = {
-                from_version: 'v' + pkgVersion,
-                to_version: 'v' + releasedVersion,
+                from_version: 'v' + releasedVersion,
+                to_version: 'v' + pkgVersion,
                 is_upgradable: releasedVersion !== pkgVersion,
             };
             (0, helper_1.setOutputs)(outputs, inputs.debug);
