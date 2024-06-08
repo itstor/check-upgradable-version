@@ -29307,6 +29307,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(9093));
 const github_1 = __nccwpck_require__(5942);
+const request_error_1 = __nccwpck_require__(4473);
 const helper_1 = __nccwpck_require__(104);
 (function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29332,16 +29333,24 @@ const helper_1 = __nccwpck_require__(104);
                 }
             }
             else {
-                const { data: release } = yield github.rest.repos.getLatestRelease({
-                    owner: inputs.owner,
-                    repo: inputs.repo,
-                });
-                if (release.tag_name) {
+                try {
+                    const { data: release } = yield github.rest.repos.getLatestRelease({
+                        owner: inputs.owner,
+                        repo: inputs.repo,
+                    });
                     releasedVersion = release.tag_name.replace(/^v/, '');
                     core.info(`Latest release: ${release.tag_name}`);
                 }
-                else {
-                    core.info('No release found. Using default version 0.0.0');
+                catch (error) {
+                    if (error instanceof request_error_1.RequestError) {
+                        if (error.status === 404) {
+                            core.info('No release found. Using default version 0.0.0');
+                        }
+                        else {
+                            throw error;
+                        }
+                    }
+                    throw error;
                 }
             }
             const pkgVersion = (0, helper_1.getPackageJson)(inputs.package_json_path).version;
@@ -31222,6 +31231,56 @@ function parseParams (str) {
 module.exports = parseParams
 
 
+/***/ }),
+
+/***/ 4473:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   "RequestError": () => (/* binding */ RequestError)
+/* harmony export */ });
+class RequestError extends Error {
+  name;
+  /**
+   * http status code
+   */
+  status;
+  /**
+   * Request options that lead to the error.
+   */
+  request;
+  /**
+   * Response object if a response was received
+   */
+  response;
+  constructor(message, statusCode, options) {
+    super(message);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+    this.name = "HttpError";
+    this.status = statusCode;
+    if ("response" in options) {
+      this.response = options.response;
+    }
+    const requestCopy = Object.assign({}, options.request);
+    if (options.request.headers.authorization) {
+      requestCopy.headers = Object.assign({}, options.request.headers, {
+        authorization: options.request.headers.authorization.replace(
+          / .*$/,
+          " [REDACTED]"
+        )
+      });
+    }
+    requestCopy.url = requestCopy.url.replace(/\bclient_secret=\w+/g, "client_secret=[REDACTED]").replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
+    this.request = requestCopy;
+  }
+}
+
+
+
 /***/ })
 
 /******/ 	});
@@ -31257,6 +31316,34 @@ module.exports = parseParams
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";

@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import { getOctokit } from '@actions/github';
+import { RequestError } from '@octokit/request-error';
 
 import { getInputs, getPackageJson, setOutputs } from './helper';
 import { Outputs } from './types';
@@ -28,16 +29,24 @@ import { Outputs } from './types';
         core.info('No prerelease found. Using default version 0.0.0');
       }
     } else {
-      const { data: release } = await github.rest.repos.getLatestRelease({
-        owner: inputs.owner,
-        repo: inputs.repo,
-      });
+      try {
+        const { data: release } = await github.rest.repos.getLatestRelease({
+          owner: inputs.owner,
+          repo: inputs.repo,
+        });
 
-      if (release.tag_name) {
         releasedVersion = release.tag_name.replace(/^v/, '');
         core.info(`Latest release: ${release.tag_name}`);
-      } else {
-        core.info('No release found. Using default version 0.0.0');
+      } catch (error) {
+        if (error instanceof RequestError) {
+          if (error.status === 404) {
+            core.info('No release found. Using default version 0.0.0');
+          } else {
+            throw error;
+          }
+        }
+
+        throw error;
       }
     }
 
@@ -68,4 +77,4 @@ import { Outputs } from './types';
 
     core.setFailed('Unknown error');
   }
-});
+})();
