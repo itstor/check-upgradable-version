@@ -1,6 +1,6 @@
 {
   "name": "check-upgradable-version",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "GitHub Action to Check the latest version of package.json then compare with the latest release on GitHub",
   "main": "./dist/index.js",
   "scripts": {

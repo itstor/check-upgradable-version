@@ -1,6 +1,5 @@
 import * as core from '@actions/core';
 import { getOctokit } from '@actions/github';
-import { RequestError } from '@octokit/request-error';
 
 import { getInputs, getPackageJson, setOutputs } from './helper';
 import { Outputs } from './types';
@@ -14,40 +13,21 @@ import { Outputs } from './types';
       core.info(`Inputs: ${JSON.stringify(inputs, null, 2)}`);
     }
 
+    const { data: releases } = await github.rest.repos.listReleases({
+      owner: inputs.owner,
+      repo: inputs.repo,
+    });
+
+    const releaseList = inputs.prerelease ? releases.filter((release) => release.prerelease) : releases;
+
     let releasedVersion = '0.0.0';
-    if (inputs.prerelease) {
-      const { data: releases } = await github.rest.repos.listReleases({
-        owner: inputs.owner,
-        repo: inputs.repo,
-      });
 
-      const prerelease = releases.find((release) => release.prerelease);
-      if (prerelease) {
-        releasedVersion = prerelease.tag_name.replace(/^v/, '');
-        core.info(`Latest prerelease: ${prerelease.tag_name}`);
-      } else {
-        core.info('No prerelease found. Using default version 0.0.0');
-      }
+    if (releaseList.length > 0) {
+      const latestRelease = releaseList[0];
+      releasedVersion = latestRelease.tag_name.replace(/^v/, '');
+      core.info(`Latest release: ${latestRelease.tag_name}`);
     } else {
-      try {
-        const { data: release } = await github.rest.repos.getLatestRelease({
-          owner: inputs.owner,
-          repo: inputs.repo,
-        });
-
-        releasedVersion = release.tag_name.replace(/^v/, '');
-        core.info(`Latest release: ${release.tag_name}`);
-      } catch (error) {
-        if (error instanceof RequestError) {
-          if (error.status === 404) {
-            core.info('No release found. Using default version 0.0.0');
-          } else {
-            throw error;
-          }
-        }
-
-        throw error;
-      }
+      core.info('No release found. Using default version 0.0.0');
     }
 
     const pkgVersion = getPackageJson(inputs.package_json_path).version;
