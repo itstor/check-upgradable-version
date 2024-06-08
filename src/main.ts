@@ -9,6 +9,10 @@ import { Outputs } from './types';
     const inputs = getInputs();
     const github = getOctokit(process.env.GITHUB_TOKEN!);
 
+    if (inputs.debug) {
+      core.info(`Inputs: ${JSON.stringify(inputs, null, 2)}`);
+    }
+
     let releasedVersion = '0.0.0';
     if (inputs.prerelease) {
       const { data: releases } = await github.rest.repos.listReleases({
@@ -44,9 +48,10 @@ import { Outputs } from './types';
     core.info(`Current version: ${pkgVersion}`);
 
     if (releasedVersion === pkgVersion) {
-      core.info('No new release found');
+      core.info('No new version found');
     } else {
-      core.info('New release found');
+      core.info('New version found');
+      core.info(`Upgradable version: v${releasedVersion} -> v${pkgVersion}`);
     }
 
     const outputs: Outputs = {
@@ -60,5 +65,7 @@ import { Outputs } from './types';
     if (error instanceof Error) {
       core.setFailed(error.message);
     }
+
+    core.setFailed('Unknown error');
   }
 });
