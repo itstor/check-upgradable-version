@@ -29313,6 +29313,9 @@ const helper_1 = __nccwpck_require__(104);
         try {
             const inputs = (0, helper_1.getInputs)();
             const github = (0, github_1.getOctokit)(process.env.GITHUB_TOKEN);
+            if (inputs.debug) {
+                core.info(`Inputs: ${JSON.stringify(inputs, null, 2)}`);
+            }
             let releasedVersion = '0.0.0';
             if (inputs.prerelease) {
                 const { data: releases } = yield github.rest.repos.listReleases({
@@ -29347,10 +29350,11 @@ const helper_1 = __nccwpck_require__(104);
             }
             core.info(`Current version: ${pkgVersion}`);
             if (releasedVersion === pkgVersion) {
-                core.info('No new release found');
+                core.info('No new version found');
             }
             else {
-                core.info('New release found');
+                core.info('New version found');
+                core.info(`Upgradable version: v${releasedVersion} -> v${pkgVersion}`);
             }
             const outputs = {
                 from_version: 'v' + pkgVersion,
@@ -29363,9 +29367,10 @@ const helper_1 = __nccwpck_require__(104);
             if (error instanceof Error) {
                 core.setFailed(error.message);
             }
+            core.setFailed('Unknown error');
         }
     });
-});
+})();
 
 
 /***/ }),
