@@ -50,6 +50,8 @@ jobs:
       - name: Check package version
         uses: itstor/check-upgradable-version@v1
         id: check_version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create release if upgradable
         if: steps.check_version.outputs.is_upgradable == 'true'
@@ -60,4 +62,6 @@ jobs:
           body: 'Auto-generated release for version ${{ steps.check_version.outputs.from_version }}'
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
