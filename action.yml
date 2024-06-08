@@ -1,0 +1,32 @@
+name: Check Upgradable Version
+description: Check the latest version of package.json then compare with the latest release on GitHub
+author: Akhmad Thoriq
+inputs:
+  owner:
+    description: The name of the owner of the repo. Used to identify the owner of the repository.
+    required: false
+  repo:
+    description: The name of the repository. Used to identify the repository on which to release.
+    required: false
+  package_json_path:
+    description: The path to the package.json file. Can be used for monorepo. Example packages/app/
+    required: false
+  prerelease:
+    description: Include the prerelease version
+    required: false
+  debug:
+    description: Show output for debugging
+    required: false
+outputs:
+  from_version:
+    description: The latest version of the release
+  to_version:
+    description: The current version of the package.json
+  is_upgradable:
+    description: Is upgradable
+runs:
+  using: node20
+  main: dist/index.js
+branding:
+  icon: tag
+  color: blue
