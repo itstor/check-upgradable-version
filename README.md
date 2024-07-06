@@ -61,7 +61,7 @@ jobs:
 
       - name: Create release if upgradable
         if: steps.check_version.outputs.is_upgradable == 'true'
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         with:
           tag_name: ${{ steps.check_version.outputs.to_version }}
           release_name: 'Release ${{ steps.check_version.outputs.to_version }}'
