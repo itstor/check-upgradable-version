@@ -11,12 +11,22 @@ inputs:
   package_json_path:
     description: The path to the package.json file. Can be used for monorepo. Example packages/app/
     required: false
-  prerelease:
-    description: Include the prerelease version
-    required: false
+    default: '.'
   debug:
     description: Show output for debugging
     required: false
+    default: 'false'
+  version_prefix:
+    description: The prefix used in version tag (e.g., 'v')
+    required: false
+  include_prefix:
+    description: Whether to include the version_prefix in the to_version and from_version outputs
+    required: false
+    default: 'false'
+  prerelease_suffix_regex:
+    description: Regex to match prerelease suffixes
+    required: false
+    default: '-(alpha|beta|rc)\.'
 outputs:
   from_version:
     description: The latest version of the release
@@ -24,6 +34,8 @@ outputs:
     description: The current version of the package.json
   is_upgradable:
     description: Is upgradable
+  is_prerelease:
+    description: Whether the current version is a prerelease
 runs:
   using: node20
   main: dist/index.js

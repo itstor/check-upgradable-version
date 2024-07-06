@@ -5,6 +5,11 @@
   "parserOptions": {
     "project": ["./tsconfig.json"]
   },
+  "overrides": [
+    {
+      "files": ["*.ts"]
+    }
+  ],
   "rules": {
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/non-nullable-type-assertion-style": "warn",

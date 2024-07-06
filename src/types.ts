@@ -1,15 +1,19 @@
 export interface Inputs {
   owner: string;
   repo: string;
-  package_json_path: string;
-  prerelease: boolean;
+  packageJsonPath: string;
   debug: boolean;
+  versionPrefix: string;
+  includePrefix: boolean;
+  preReleaseSuffixRegex: string;
+  includePreRelease: boolean;
 }
 
 export interface Outputs {
   from_version: string;
   to_version: string;
   is_upgradable: boolean;
+  is_prerelease: boolean;
 }
 
 export interface PackageJson {
