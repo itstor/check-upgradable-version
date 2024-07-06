@@ -14,12 +14,10 @@ export async function run() {
       core.info(`Inputs: ${JSON.stringify(inputs, null, 2)}`);
     }
 
-    const { data: releases } = await github.rest.repos.listReleases({
+    const { data: releaseList } = await github.rest.repos.listReleases({
       owner: inputs.owner,
       repo: inputs.repo,
     });
-
-    const releaseList = inputs.includePreRelease ? releases : releases.filter((release) => !release.prerelease);
 
     let releasedVersion = '0.0.0';
     if (releaseList.length > 0) {

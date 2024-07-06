@@ -6,7 +6,6 @@ export interface Inputs {
   versionPrefix: string;
   includePrefix: boolean;
   preReleaseSuffixRegex: string;
-  includePreRelease: boolean;
 }
 
 export interface Outputs {

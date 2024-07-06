@@ -32,7 +32,6 @@ export function getInputs(): Inputs {
     debug: parseBoolean(core.getInput('debug', { required: false })),
     versionPrefix: core.getInput('version_prefix', { required: false }),
     includePrefix: parseBoolean(core.getInput('include_prefix', { required: false })),
-    includePreRelease: parseBoolean(core.getInput('include_prerelease', { required: false }), true),
     preReleaseSuffixRegex: core.getInput('prerelease_suffix_regex', { required: false }) || '-(alpha|beta|rc)\\.',
   };
 

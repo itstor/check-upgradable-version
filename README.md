@@ -56,7 +56,6 @@ jobs:
         with:
           version_prefix: 'v'
           include_prefix: true
-          prerelease_suffix_regex: '-(alpha|beta|rc)\.'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -98,18 +97,6 @@ You can specify a custom prefix for your version numbers:
   with:
     version_prefix: 'version-'
     include_prefix: true
-```
-
-### Prerelease Handling
-
-To include prerelease versions in the comparison:
-
-```yaml
-- name: Check package version
-  uses: itstor/check-upgradable-version@v2
-  with:
-    prerelease: true
-    prerelease_suffix_regex: '-(alpha|beta|rc|dev)\.'
 ```
 
 ## Contributing
